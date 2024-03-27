@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import css from "./SearchBar.module.css";
+import toast from "react-hot-toast";
 
 const SearchBar = ({ onSearch }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -7,6 +8,9 @@ const SearchBar = ({ onSearch }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     onSearch(searchQuery);
+    if (searchQuery.trim() === "") {
+      toast.error("you need to write something in the input");
+    }
   };
 
   return (
