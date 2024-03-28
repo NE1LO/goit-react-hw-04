@@ -7,6 +7,7 @@ import ImageGallery from "./ImageGallery/ImageGallery";
 import LoadMoreBtn from "./LoadMoreBtn/LoadMoreBtn";
 import ImageModal from "./ImageModal/ImageModal";
 import Loader from "./Loader/Loader";
+import ErrorMessage from "./ErrorMessage/ErrorMessage";
 
 import "./App.css";
 
@@ -79,7 +80,7 @@ function App() {
     <>
       <SearchBar onSearch={onSearch} />
       <ImageGallery gallery={gallery} handleImageClick={handleImageClick} />
-
+      {gallery.length < 1 && <ErrorMessage />}
       {loader && <Loader />}
       {gallery.length > 0 && !loader && <LoadMoreBtn onLoadMore={onLoadMore} />}
       <ImageModal

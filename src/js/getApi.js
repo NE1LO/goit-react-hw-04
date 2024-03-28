@@ -21,7 +21,7 @@ const getPhotos = async ({ query, page }) => {
     });
     return response;
   } catch (error) {
-    toast.error("Oops, bad reguest");
+    // toast.error("Oops, bad reguest");
     throw new Error("bad request");
   }
 };
