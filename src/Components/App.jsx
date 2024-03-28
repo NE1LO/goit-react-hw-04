@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
+import toast, { Toaster } from "react-hot-toast";
+import getPhotos from "../js/getApi";
+//======import====components======//
 import SearchBar from "./SearchBar/SearchBar";
 import ImageGallery from "./ImageGallery/ImageGallery";
 import LoadMoreBtn from "./LoadMoreBtn/LoadMoreBtn";
-import toast, { Toaster } from "react-hot-toast";
-import { ProgressBar } from "react-loader-spinner";
-import getPhotos from "../js/getApi";
+import ImageModal from "./ImageModal/ImageModal";
+import Loader from "./Loader/Loader";
+
 import "./App.css";
 
 function App() {
@@ -12,6 +15,23 @@ function App() {
   const [page, setPage] = useState(1);
   const [gallery, setGallery] = useState([]);
   const [loader, setLoader] = useState(false);
+  // trigger================================
+  const [trigger, setTrigger] = useState("");
+  // modal==================================
+  const [photoModal, setPhotoModal] = useState("");
+  const [showModal, setShowModal] = useState(false);
+
+  const handleImageClick = (photo) => {
+    setPhotoModal(photo.urls.regular);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setPhotoModal("");
+  };
+
+  // =========================================
 
   useEffect(() => {
     const fetchPhoto = async () => {
@@ -23,11 +43,17 @@ function App() {
         const photosData = await getPhotos({ query, page });
         if (photosData.data.results.length === 0) {
           toast.error("ми не знайшли нічого по запиту " + query);
+          return;
         }
-        setGallery((prevGallery) => [
-          ...prevGallery,
-          ...photosData.data.results,
-        ]);
+
+        if (trigger === "search") {
+          setGallery(photosData.data.results);
+        } else {
+          setGallery((prevGallery) => [
+            ...prevGallery,
+            ...photosData.data.results,
+          ]);
+        }
       } catch (error) {
         toast.error("Oops, bad reguest");
       } finally {
@@ -35,35 +61,33 @@ function App() {
       }
     };
     fetchPhoto();
-  }, [query, page]);
+  }, [query, page, trigger]);
 
   const onSearch = (searchQuery) => {
     setQuery(searchQuery);
     setPage(1);
+    setTrigger("search");
   };
-
   const onLoadMore = () => {
+    window.scrollBy(0, 60);
     setPage((prevPage) => prevPage + 1);
     console.log(page);
+    setTrigger("loadMore");
   };
 
   return (
     <>
       <SearchBar onSearch={onSearch} />
-      <ImageGallery gallery={gallery} />
-      {loader && (
-        <ProgressBar
-          visible={true}
-          height="80"
-          width="80"
-          color="#646cff"
-          ariaLabel="progress-bar-loading"
-          wrapperStyle={{}}
-          wrapperClass=""
-        />
-      )}
-      {gallery.length > 0 && !loader && <LoadMoreBtn onLoadMore={onLoadMore} />}
+      <ImageGallery gallery={gallery} handleImageClick={handleImageClick} />
 
+      {loader && <Loader />}
+      {gallery.length > 0 && !loader && <LoadMoreBtn onLoadMore={onLoadMore} />}
+      <ImageModal
+        isOpen={showModal}
+        closeModal={closeModal}
+        imageUrl={photoModal}
+        alt="Selected Image"
+      />
       <Toaster position="top-right" reverseOrder={false} />
     </>
   );

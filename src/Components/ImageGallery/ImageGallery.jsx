@@ -1,21 +1,16 @@
 import React, { useEffect, useState } from "react";
+import ImageCard from "../ImageCard/ImageCard";
 
 import css from "./ImageGallery.module.css";
 
-const ImageGallery = ({ gallery }) => {
+const ImageGallery = ({ gallery, handleImageClick }) => {
   return (
     <>
       {gallery && (
         <ul className={css.photolist}>
           {gallery.map((photo) => (
             <li key={photo.id}>
-              <div>
-                <img
-                  className={css.image}
-                  src={photo.urls.small}
-                  alt={photo.alt_description}
-                />
-              </div>
+              <ImageCard photo={photo} handleImageClick={handleImageClick} />
             </li>
           ))}
         </ul>
