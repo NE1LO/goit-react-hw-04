@@ -16,6 +16,7 @@ function App() {
   const [page, setPage] = useState(1);
   const [gallery, setGallery] = useState([]);
   const [loader, setLoader] = useState(false);
+  const [error, setError] = useState(false);
   // trigger================================
   const [trigger, setTrigger] = useState("");
   // modal==================================
@@ -37,6 +38,7 @@ function App() {
   useEffect(() => {
     const fetchPhoto = async () => {
       try {
+        setError(false);
         setLoader(true);
         if (query.trim() == "") {
           return;
@@ -44,6 +46,7 @@ function App() {
         const photosData = await getPhotos({ query, page });
         if (photosData.data.results.length === 0) {
           toast.error("ми не знайшли нічого по запиту " + query);
+          setError(true);
           return;
         }
 
@@ -80,7 +83,7 @@ function App() {
     <>
       <SearchBar onSearch={onSearch} />
       <ImageGallery gallery={gallery} handleImageClick={handleImageClick} />
-      {gallery.length < 1 && <ErrorMessage />}
+      {error && <ErrorMessage />}
       {loader && <Loader />}
       {gallery.length > 0 && !loader && <LoadMoreBtn onLoadMore={onLoadMore} />}
       <ImageModal
