@@ -68,6 +68,9 @@ function App() {
   }, [query, page, trigger]);
 
   const onSearch = (searchQuery) => {
+    if (searchQuery.trim() == "") {
+      return;
+    }
     setQuery(searchQuery);
     setPage(1);
     setTrigger("search");
