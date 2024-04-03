@@ -7,10 +7,11 @@ const SearchBar = ({ onSearch }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSearch(searchQuery);
     if (searchQuery.trim() === "") {
       toast.error("you need to write something in the input");
+      return;
     }
+    onSearch(searchQuery);
   };
 
   return (
